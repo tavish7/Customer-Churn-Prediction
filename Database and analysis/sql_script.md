@@ -12,9 +12,9 @@ FROM fact_churn_metrics;
 <details>
 <summary>Output</summary>
 
-This is the hidden content! You can put regular markdown text here.
-- Bullet point one
-- Bullet point two
+| total_customers | churned_customers | churn_rate |
+|-------------------|-------------------|------------|
+| 7043              | 1869              | 26.54      |
 
 </details>
 
@@ -28,6 +28,15 @@ SELECT
 FROM fact_churn_metrics
 GROUP BY churn_label;
 ```
+<details>
+<summary>Output</summary>
+
+| churn_label | customers |
+|-------------|-----------|
+| No          | 5174      |
+| Yes         | 1869      |
+
+</details>
 
 ---
 
@@ -44,6 +53,16 @@ ON f.customerid = d.customerid
 GROUP BY d.gender;
 ```
 
+<details>
+<summary>Output</summary>
+
+| gender | customers | churned | churn_rate |
+|--------|-----------|---------|------------|
+| Female | 3488      | 939     | 26.92      |
+| Male   | 3555      | 930     | 26.16      |
+
+</details>
+
 ---
 
 ### Q4. Do senior citizen churn more?
@@ -56,6 +75,16 @@ JOIN dim_demographics d
 ON f.customerid=d.customerid
 GROUP BY senior_citizen;
 ```
+
+<details>
+<summary>Output</summary>
+
+| senior_citizen | churn_rate |
+|----------------|------------|
+| No             | 23.61      |
+| Yes            | 41.68      |
+
+</details>
 
 ---
 
@@ -71,6 +100,16 @@ GROUP BY dependents;
 
 ```
 
+<details>
+<summary>Output</summary>
+
+| dependents | churn_rate |
+|------------|------------|
+| No         | 32.55      |
+| Yes        | 6.52       |
+
+</details>
+
 ---
 
 ### Q6. Which contract type has the highest churn ? or How much does a retreiving a customer for long term affect on churn rate?
@@ -85,6 +124,18 @@ ON f.customerid=a.customerid
 GROUP BY contract
 ORDER BY churn_rate DESC;
 ```
+
+<details>
+<summary>Output</summary>
+
+| contract       | customers | churn_rate |
+|----------------|-----------|------------|
+| Month-to-month | 3875      | 42.71      |
+| One year       | 1473      | 11.27      |
+| Two year       | 1695      | 2.83       |
+
+</details>
+
 ---
 
 ### Q7. Which payment method is most associated with churn?
@@ -99,6 +150,18 @@ GROUP BY payment_method
 ORDER BY churn_rate DESC;
 ```
 
+<details>
+<summary>Output</summary>
+
+| payment_method            | churn_rate |
+|---------------------------|------------|
+| Electronic check          | 45.29      |
+| Mailed check              | 19.11      |
+| Bank transfer (automatic) | 16.71      |
+| Credit card (automatic)   | 15.24      |
+
+</details>
+
 ---
 
 
@@ -112,6 +175,17 @@ JOIN dim_account_terms a
 ON f.customerid=a.customerid
 GROUP BY paperless_billing;
 ```
+
+<details>
+<summary>Output</summary>
+
+| paperless_billing | churn_rate |
+|---------------------|------------|
+| Yes                 | 33.57      |
+| No                  | 16.33      |
+
+</details>
+
 ---
 
 ### Q9. Are we losing our cheap, premium or high paying subscribed customers for churned and not churned customer i.e. check for ARPU (Average Revenue Per User) Vs Churn status
@@ -125,6 +199,16 @@ FROM fact_churn_metrics
 GROUP BY churn_label;
 ```
 
+<details>
+<summary>Output</summary>
+
+| churn_label | total_customers | arpu_monthly |
+|-------------|-----------------|--------------|
+| No          | 5174            | 61.27        |
+| Yes         | 1869            | 74.44        |
+
+</details>
+
 ---
 
 ### Q10. Revenue lost during churn
@@ -134,6 +218,15 @@ SELECT
 FROM fact_churn_metrics
 WHERE churn_value=1;
 ```
+
+<details>
+<summary>Output</summary>
+
+| total_active_users | total_monthly_revenue | true_arpu |
+|--------------------|-----------------------|-----------|
+| 5174               | 316985.75             | 61.27     |
+
+</details>
 
 ---
 
@@ -147,6 +240,13 @@ FROM fact_churn_metrics
 WHERE churn_value = 0;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 ---
 
 ### Q12. Revenue contribution by customers
@@ -157,6 +257,13 @@ SELECT
 FROM fact_churn_metrics
 GROUP BY churn_label;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
 
@@ -171,6 +278,13 @@ GROUP BY customer_value_segment
 ORDER BY revenue_lost DESC;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 
 ---
 
@@ -184,7 +298,15 @@ FROM fact_churn_metrics f
 INNER JOIN dim_account_terms d ON f.customerid = d.customerid
 GROUP BY d.contract
 ORDER BY churn_rate_pct DESC;
+
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
 
@@ -199,6 +321,13 @@ GROUP BY f.total_services
 ORDER BY f.total_services ASC;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 ---
 
 ### Q16. At what tenure do customers churn most?
@@ -212,6 +341,13 @@ GROUP BY tenure_group
 ORDER BY churned_customers DESC;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 ---
 
 ### Q17. Churn rate by tenure group
@@ -224,6 +360,13 @@ GROUP BY tenure_group
 ORDER BY churn_rate DESC;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 ---
 
 ### Q18. Average tenure of churned vs retained customers
@@ -234,6 +377,14 @@ SELECT
 FROM fact_churn_metrics
 GROUP BY churn_label;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 
 ---
 
@@ -254,6 +405,13 @@ FROM SpendQuartiles
 GROUP BY spend_quartile
 ORDER BY spend_quartile ASC;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
 
@@ -276,6 +434,13 @@ FROM TenureAgg
 LIMIT 12;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 ---
 
 ### Q21. Does online security reduce churn?
@@ -288,6 +453,13 @@ JOIN dim_products p
 ON f.customerid=p.customerid
 GROUP BY online_security;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
 
@@ -302,6 +474,13 @@ ON f.customerid=p.customerid
 GROUP BY internet_service
 ORDER BY churn_rate DESC;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
 
@@ -322,6 +501,14 @@ SELECT * FROM RiskRanked
 WHERE risk_rank <= 50;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
+
 ---
 
 ### Q24. Does providing technical support actually save us money in the long run?
@@ -338,6 +525,13 @@ WHERE p.internet_service != 'No'
 GROUP BY p.tech_support
 ORDER BY churn_rate_pct DESC;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
 
@@ -358,6 +552,13 @@ ORDER BY total_neighborhood_value DESC
 LIMIT 10;
 ```
 
+<details>
+<summary>Output</summary>
+
+
+
+</details>
+
 ---
 
 ### Q26. In which cities are we losing the most financial lifetime value due to churn?
@@ -375,5 +576,12 @@ HAVING SUM(f.churn_value) > 0
 ORDER BY total_lost_cltv DESC
 LIMIT 10;
 ```
+
+<details>
+<summary>Output</summary>
+
+
+
+</details>
 
 ---
