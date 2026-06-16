@@ -1,24 +1,38 @@
-USE customer_churn;
+# 📈Analyse the data🤔
+***
 
--- Q1. What is the overall churn rate?
+### Q1. What is the overall churn rate?
+```sql
 SELECT
     COUNT(*) AS total_customers,
     SUM(churn_value) AS churned_customers,
     ROUND(SUM(churn_value)*100.0/COUNT(*),2) AS churn_rate
 FROM fact_churn_metrics;
+```
+<details>
+<summary>Output</summary>
 
--- ------------------------------------------------------------------------------
+This is the hidden content! You can put regular markdown text here.
+- Bullet point one
+- Bullet point two
 
--- Q2. How many customers are active and how many have churned?
+</details>
+
+---
+
+### Q2. How many customers are active and how many have churned?
+```sql
 SELECT
     churn_label,
     COUNT(*) AS customers
 FROM fact_churn_metrics
 GROUP BY churn_label;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q3. Which gender has the highest churn rate?
+### Q3. Which gender has the highest churn rate?
+```sql
 SELECT
     d.gender,
     COUNT(*) AS customers,
@@ -28,10 +42,12 @@ FROM fact_churn_metrics f
 JOIN dim_demographics d
 ON f.customerid = d.customerid
 GROUP BY d.gender;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q4. Do senior citizen churn more?
+### Q4. Do senior citizen churn more?
+```sql
 SELECT
     senior_citizen,
     ROUND(AVG(churn_value)*100,2) AS churn_rate
@@ -39,11 +55,12 @@ FROM fact_churn_metrics f
 JOIN dim_demographics d
 ON f.customerid=d.customerid
 GROUP BY senior_citizen;
+```
 
+---
 
--- ------------------------------------------------------------------------------
-
--- Q5. Does having dependents reduce churn?
+### Q5. Does having dependents reduce churn?
+```sql
 SELECT
     dependents,
     ROUND(AVG(churn_value)*100,2) AS churn_rate
@@ -52,9 +69,12 @@ JOIN dim_demographics d
 ON f.customerid=d.customerid
 GROUP BY dependents;
 
--- ------------------------------------------------------------------------------
+```
 
--- Q6. Which contract type has the highest churn ? or How much does a retreiving a customer for long term affect on churn rate?
+---
+
+### Q6. Which contract type has the highest churn ? or How much does a retreiving a customer for long term affect on churn rate?
+```sql
 SELECT
     contract,
     COUNT(*) customers,
@@ -64,10 +84,11 @@ JOIN dim_account_terms a
 ON f.customerid=a.customerid
 GROUP BY contract
 ORDER BY churn_rate DESC;
+```
+---
 
--- ------------------------------------------------------------------------------
-
--- Q7. Which payment method is most associated with churn?
+### Q7. Which payment method is most associated with churn?
+```sql
 SELECT
     payment_method,
     ROUND(AVG(churn_value)*100,2) AS churn_rate
@@ -76,11 +97,13 @@ JOIN dim_account_terms a
 ON f.customerid=a.customerid
 GROUP BY payment_method
 ORDER BY churn_rate DESC;
+```
+
+---
 
 
--- ------------------------------------------------------------------------------
-
--- Q8. Does paperless billing affect churn?
+### Q8. Does paperless billing affect churn?
+```sql
 SELECT
     paperless_billing,
     ROUND(AVG(churn_value)*100,2) AS churn_rate
@@ -88,48 +111,57 @@ FROM fact_churn_metrics f
 JOIN dim_account_terms a
 ON f.customerid=a.customerid
 GROUP BY paperless_billing;
+```
+---
 
--- ------------------------------------------------------------------------------
+### Q9. Are we losing our cheap, premium or high paying subscribed customers for churned and not churned customer i.e. check for ARPU (Average Revenue Per User) Vs Churn status
 
--- Q9. Are we losing our cheap, premium or high paying subscribed customers for churned and not churned customer i.e. check for ARPU (Average Revenue Per User) Vs Churn status
+```sql
 SELECT
 	churn_label,
 	COUNT(customerid) AS total_customers,
 	ROUND(AVG(monthly_charges), 2) AS arpu_monthly
 FROM fact_churn_metrics
 GROUP BY churn_label;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q10. Revenue lost during churn
+### Q10. Revenue lost during churn
+```sql
 SELECT
     ROUND(SUM(monthly_charges), 2) AS monthly_revenue_lost
 FROM fact_churn_metrics
 WHERE churn_value=1;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q11. What is the true ARPU for our active customer base?
+### Q11. What is the true ARPU for our active customer base?
+```sql
 SELECT 
     COUNT(customerid) AS total_active_users,
     ROUND(SUM(monthly_charges), 2) AS total_monthly_revenue,
     ROUND(AVG(monthly_charges), 2) AS true_arpu
 FROM fact_churn_metrics
 WHERE churn_value = 0;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q12. Revenue contribution by customers
+### Q12. Revenue contribution by customers
+```sql
 SELECT
     churn_label,
     ROUND(SUM(monthly_charges),2) AS revenue
 FROM fact_churn_metrics
 GROUP BY churn_label;
+```
 
+---
 
--- ------------------------------------------------------------------------------
-
--- Q13. Which customer value segment losses the most revenue?
+### Q13. Which customer value segment losses the most revenue?
+```sql
 SELECT
     customer_value_segment,
     ROUND(SUM(monthly_charges),2) AS revenue_lost
@@ -137,11 +169,13 @@ FROM fact_churn_metrics
 WHERE churn_value=1
 GROUP BY customer_value_segment
 ORDER BY revenue_lost DESC;
+```
 
 
--- ------------------------------------------------------------------------------
+---
 
--- Q14. How much does a retreiving a customer for long term affect on churn rate?
+### Q14. How much does a retreiving a customer for long term affect on churn rate?
+```sql
 SELECT
 	d.contract,
 	COUNT(f.customerid) AS customer_base,
@@ -150,10 +184,12 @@ FROM fact_churn_metrics f
 INNER JOIN dim_account_terms d ON f.customerid = d.customerid
 GROUP BY d.contract
 ORDER BY churn_rate_pct DESC;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q15. Are customers who use more services less likely to leave?
+### Q15. Are customers who use more services less likely to leave?
+```sql
 SELECT
 	f.total_services,
 	COUNT(f.customerid) AS total_customers,
@@ -161,10 +197,12 @@ SELECT
 FROM fact_churn_metrics f
 GROUP BY f.total_services
 ORDER BY f.total_services ASC;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q16. At what tenure do customers churn most?
+### Q16. At what tenure do customers churn most?
+```sql
 SELECT
     tenure_group,
     COUNT(*) AS churned_customers
@@ -172,29 +210,35 @@ FROM fact_churn_metrics
 WHERE churn_value=1
 GROUP BY tenure_group
 ORDER BY churned_customers DESC;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q17. Churn rate by tenure group
+### Q17. Churn rate by tenure group
+```sql
 SELECT
     tenure_group,
     ROUND(AVG(churn_value)*100,2) AS churn_rate
 FROM fact_churn_metrics
 GROUP BY tenure_group
 ORDER BY churn_rate DESC;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q18. Average tenure of churned vs retained customers
+### Q18. Average tenure of churned vs retained customers
+```sql
 SELECT
     churn_label,
     ROUND(AVG(tenure_months),2) avg_tenure
 FROM fact_churn_metrics
 GROUP BY churn_label;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q19. Spend quartile risk analysis - Are most expensive pricing tiers driving custimers away?
+### Q19. Spend quartile risk analysis - Are most expensive pricing tiers driving custimers away?
+```sql
 WITH SpendQuartiles AS (
 SELECT
 	customerid,
@@ -209,11 +253,12 @@ SELECT
 FROM SpendQuartiles
 GROUP BY spend_quartile
 ORDER BY spend_quartile ASC;
+```
 
+---
 
--- ------------------------------------------------------------------------------
-
--- Q20. At what month in the customer lifecycle are they most vulnerable to leaving?
+### Q20. At what month in the customer lifecycle are they most vulnerable to leaving?
+```sql
 WITH TenureAgg AS (
 SELECT
 	tenure_months,
@@ -229,10 +274,12 @@ SELECT
 	(SUM(total_at_tenure) OVER (ORDER BY tenure_months)) * 100, 2) AS cumulative_churn_pct
 FROM TenureAgg
 LIMIT 12;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q21. Does online security reduce churn?
+### Q21. Does online security reduce churn?
+```sql
 SELECT
     online_security,
     ROUND(AVG(churn_value)*100,2) churn_rate
@@ -240,10 +287,12 @@ FROM fact_churn_metrics f
 JOIN dim_products p
 ON f.customerid=p.customerid
 GROUP BY online_security;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q22. Which internet service has the highest churn rate?
+### Q22. Which internet service has the highest churn rate?
+```sql
 SELECT
     internet_service,
     ROUND(AVG(churn_value)*100,2) churn_rate
@@ -252,10 +301,12 @@ JOIN dim_products p
 ON f.customerid=p.customerid
 GROUP BY internet_service
 ORDER BY churn_rate DESC;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q23. "Who are the exact top 50 active customers that company should contact to save the most revenue?"
+### Q23. "Who are the exact top 50 active customers that company should contact to save the most revenue?"
+```sql
 WITH RiskRanked AS (
 SELECT
 	f.customerid,
@@ -269,10 +320,12 @@ WHERE f.churn_value = 0
 )
 SELECT * FROM RiskRanked
 WHERE risk_rank <= 50;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q24. Does providing technical support actually save us money in the long run?
+### Q24. Does providing technical support actually save us money in the long run?
+```sql
 SELECT 
     p.tech_support,
     COUNT(f.customerid) AS total_customers,
@@ -284,10 +337,12 @@ INNER JOIN dim_products p
 WHERE p.internet_service != 'No'
 GROUP BY p.tech_support
 ORDER BY churn_rate_pct DESC;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q25. Which cities contain our highest-value customer bases, and what is their churn profile?
+### Q25. Which cities contain our highest-value customer bases, and what is their churn profile?
+```sql
 SELECT 
     l.city,
     COUNT(f.customerid) AS total_customers,
@@ -301,10 +356,12 @@ GROUP BY l.city
 HAVING COUNT(f.customerid) >= 30 
 ORDER BY total_neighborhood_value DESC
 LIMIT 10;
+```
 
--- ------------------------------------------------------------------------------
+---
 
--- Q26. In which cities are we losing the most financial lifetime value due to churn?
+### Q26. In which cities are we losing the most financial lifetime value due to churn?
+```sql
 SELECT 
     l.city,
     COUNT(CASE WHEN f.churn_value = 1 THEN 1 END) AS churned_count,
@@ -317,5 +374,6 @@ GROUP BY l.city
 HAVING SUM(f.churn_value) > 0
 ORDER BY total_lost_cltv DESC
 LIMIT 10;
+```
 
--- ------------------------------------------------------------------------------
+---

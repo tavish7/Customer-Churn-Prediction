@@ -21,7 +21,7 @@ CREATE TABLE dim_demographics (
     dependents VARCHAR(5)
 );
 
--- 3. Create Products Dimension (Only actual services)
+-- 3. Create Products Dimension 
 CREATE TABLE dim_products (
     customerid VARCHAR(20) PRIMARY KEY,
     phone_service VARCHAR(5),
@@ -35,7 +35,7 @@ CREATE TABLE dim_products (
     streaming_movies VARCHAR(25)
 );
 
--- 4. Create Account Terms Dimension (Only administrative/billing details)
+-- 4. Create Account Terms Dimension
 CREATE TABLE dim_account_terms (
     customerid VARCHAR(20) PRIMARY KEY,
     contract VARCHAR(20),
@@ -99,3 +99,14 @@ Rename staging_churn_data to backup_raw_data as a backup reference
 */
 RENAME TABLE staging_churn_data TO backup_raw_data;
 
+
+-- Update location table
+-- Add the empty 'city' 
+ALTER TABLE dim_location
+ADD COLUMN city VARCHAR(100);
+
+-- Fill the empty column by matching zip codes with your backup data
+UPDATE dim_location d
+INNER JOIN backup_raw_data b 
+    ON d.zip_code = b.zip_code
+SET d.city = b.city;
