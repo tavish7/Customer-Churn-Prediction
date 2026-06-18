@@ -18,17 +18,29 @@ in plain English.
 
 ## Table of Contents
 
-- [Business Problem](#business-problem)
-- [Project Phases](#project-phases)
-- [Tech Stack](#tech-stack)
-- [Power BI Dashboards](#power-bi-dashboards)
-- [Key Findings](#key-findings)
-- [Machine Learning Results](#machine-learning-results)
-- [Business Recommendations](#business-recommendations)
-- [Phase 5: GenAI Churn Chatbot](#phase-5-genai-churn-chatbot)
-- [Getting Started](#getting-started)
-- [Repository Structure](#repository-structure)
-- [Author](#author)
+- [Customer Churn Analysis \& GenAI Chatbot](#customer-churn-analysis--genai-chatbot)
+  - [Table of Contents](#table-of-contents)
+  - [Business Problem](#business-problem)
+  - [Project Phases](#project-phases)
+  - [Tech Stack](#tech-stack)
+  - [Power BI Dashboards](#power-bi-dashboards)
+    - [1. Executive Summary](#1-executive-summary)
+    - [2. Churn Analysis](#2-churn-analysis)
+    - [3. Revenue Insights](#3-revenue-insights)
+    - [4. Customer Behaviour](#4-customer-behaviour)
+  - [Key Findings](#key-findings)
+    - [Contract \& billing are the strongest churn drivers](#contract--billing-are-the-strongest-churn-drivers)
+    - [Early tenure is the danger zone](#early-tenure-is-the-danger-zone)
+    - [Services \& support reduce churn](#services--support-reduce-churn)
+    - [Revenue impact](#revenue-impact)
+  - [Machine Learning Results](#machine-learning-results)
+  - [Business Recommendations](#business-recommendations)
+  - [Phase 5: GenAI Churn Chatbot](#phase-5-genai-churn-chatbot)
+  - [Getting Started](#getting-started)
+    - [1. Clone and install](#1-clone-and-install)
+    - [2. Reproduce the analysis (optional)](#2-reproduce-the-analysis-optional)
+    - [3. Run the chatbot (Phase 5)](#3-run-the-chatbot-phase-5)
+  - [Repository Structure](#repository-structure)
 
 ---
 
@@ -268,9 +280,3 @@ Project 1/
 ```
 
 ---
-
-## Author
-
-Built as a multi-phase data analytics and GenAI bootcamp project covering the
-full lifecycle: data engineering, machine learning, business intelligence, and
-applied generative AI.
