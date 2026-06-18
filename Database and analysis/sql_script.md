@@ -222,9 +222,9 @@ WHERE churn_value=1;
 <details>
 <summary>Output</summary>
 
-| total_active_users | total_monthly_revenue | true_arpu |
-|--------------------|-----------------------|-----------|
-| 5174               | 316985.75             | 61.27     |
+| monthly_revenue_lost |
+|------------------------|
+| 139130.85              |
 
 </details>
 
@@ -243,6 +243,9 @@ WHERE churn_value = 0;
 <details>
 <summary>Output</summary>
 
+| total_active_users | total_monthly_revenue | true_arpu |
+|--------------------|-----------------------|-----------|
+| 5174               | 316985.75             | 61.27     |
 
 
 </details>
@@ -261,7 +264,10 @@ GROUP BY churn_label;
 <details>
 <summary>Output</summary>
 
-
+| churn_label | revenue   |
+|-------------|-----------|
+| No          | 316985.75 |
+| Yes         | 139130.85 |
 
 </details>
 
@@ -281,7 +287,12 @@ ORDER BY revenue_lost DESC;
 <details>
 <summary>Output</summary>
 
-
+| customer_value_segment | revenue_lost |
+|------------------------|--------------|
+| Bronze                 | 44456.4      |
+| Silver                 | 35137.55     |
+| Gold                   | 31720.1      |
+| Platinum               | 27816.8      |
 
 </details>
 
@@ -304,7 +315,11 @@ ORDER BY churn_rate_pct DESC;
 <details>
 <summary>Output</summary>
 
-
+| contract       | customer_base | churn_rate_pct |
+|----------------|---------------|----------------|
+| Month-to-month | 3875          | 42.71          |
+| One year       | 1473          | 11.27          |
+| Two year       | 1695          | 2.83           |
 
 </details>
 
@@ -324,7 +339,17 @@ ORDER BY f.total_services ASC;
 <details>
 <summary>Output</summary>
 
-
+| total_services | total_customers | churn_rate_pct |
+|------------------|-----------------|----------------|
+| 1                | 1264            | 10.92          |
+| 2                | 859             | 30.97          |
+| 3                | 846             | 44.92          |
+| 4                | 965             | 36.48          |
+| 5                | 922             | 31.34          |
+| 6                | 908             | 25.55          |
+| 7                | 676             | 22.49          |
+| 8                | 395             | 12.41          |
+| 9                | 208             | 5.29           |
 
 </details>
 
@@ -344,7 +369,12 @@ ORDER BY churned_customers DESC;
 <details>
 <summary>Output</summary>
 
-
+| tenure_group | churned_customers | churn_rate_pct |
+|--------------|-------------------|----------------|
+| 0-1 Year     | 1037              | 10.92          |
+| 2-4 Years    | 325               | 30.97          |
+| 1-2 Years    | 294               | 44.92          |
+| 4+ Years     | 213               | 36.48          |
 
 </details>
 
@@ -381,7 +411,12 @@ GROUP BY churn_label;
 <details>
 <summary>Output</summary>
 
-
+| tenure_group | churn_rate |
+|----------------|------------|
+| 0-1 Year       | 47.44      |
+| 1-2 Years      | 28.71      |
+| 2-4 Years      | 20.39      |
+| 4+ Years       | 9.51       |
 
 </details>
 
@@ -409,7 +444,12 @@ ORDER BY spend_quartile ASC;
 <details>
 <summary>Output</summary>
 
-
+| spend_quartile | customers_in_bucket | churn_rate_pct |
+|----------------|---------------------|----------------|
+| 1              | 1761                | 32.88          |
+| 2              | 1761                | 37.42          |
+| 3              | 1761                | 24.59          |
+| 4              | 1760                | 11.25          |
 
 </details>
 
@@ -437,7 +477,20 @@ LIMIT 12;
 <details>
 <summary>Output</summary>
 
-
+| tenure_months | churned_at_tenure | cumulative_churn_pct |
+|---------------|-------------------|----------------------|
+| 0             | 0                 | 0.00                 |
+| 1             | 380               | 60.90                |
+| 2             | 123               | 58.35                |
+| 3             | 94                | 56.21                |
+| 4             | 83                | 54.93                |
+| 5             | 64                | 54.27                |
+| 6             | 40                | 52.94                |
+| 7             | 51                | 51.80                |
+| 8             | 42                | 50.55                |
+| 9             | 46                | 49.78                |
+| 10            | 45                | 49.14                |
+| 11            | 31                | 48.28                |
 
 </details>
 
@@ -457,7 +510,11 @@ GROUP BY online_security;
 <details>
 <summary>Output</summary>
 
-
+| online_security   | churn_rate |
+|---------------------|------------|
+| No                  | 41.77      |
+| Yes                 | 14.61      |
+| No internet service | 7.40       |
 
 </details>
 
@@ -478,7 +535,11 @@ ORDER BY churn_rate DESC;
 <details>
 <summary>Output</summary>
 
-
+| internet_service | churn_rate |
+|------------------|------------|
+| Fiber optic      | 41.89      |
+| DSL              | 18.96      |
+| No               | 7.40       |
 
 </details>
 
@@ -504,7 +565,58 @@ WHERE risk_rank <= 50;
 <details>
 <summary>Output</summary>
 
-
+| customerid | monthly_charges | churn_score | contract       | risk_rank |
+|------------|-----------------|-------------|----------------|-----------|
+| 5914-XRFQB | 115.8           | 80          | Two year       | 1         |
+| 3396-DKDEL | 115.15          | 80          | Two year       | 2         |
+| 0619-OLYUR | 111.9           | 80          | Two year       | 3         |
+| 2499-AJYUA | 110.8           | 80          | Two year       | 4         |
+| 3766-EJLFL | 109.05          | 80          | Two year       | 5         |
+| 4016-BJKTZ | 108.9           | 80          | Two year       | 6         |
+| 9137-UIYPG | 106.9           | 80          | Month-to-month | 7         |
+| 4010-YLMVT | 106.6           | 80          | Month-to-month | 8         |
+| 8777-MBMTS | 105.85          | 80          | Two year       | 9         |
+| 5074-FBGHB | 104.65          | 80          | One year       | 10        |
+| 1442-OKRJE | 103.15          | 80          | One year       | 11        |
+| 4062-HBMOS | 103.05          | 80          | Month-to-month | 12        |
+| 6693-FRIRW | 101.3           | 80          | Month-to-month | 13        |
+| 7315-WYOAW | 100.75          | 80          | Month-to-month | 14        |
+| 6196-HBOBZ | 99.35           | 80          | Two year       | 15        |
+| 5150-LJNSR | 98.05           | 80          | One year       | 16        |
+| 6728-VOIFY | 96              | 80          | One year       | 17        |
+| 7375-WMVMT | 95.5            | 80          | Two year       | 18        |
+| 0248-PGHBZ | 92.45           | 80          | Two year       | 19        |
+| 5222-IMUKT | 91.05           | 80          | Month-to-month | 20        |
+| 4377-VDHYI | 90.8            | 80          | One year       | 21        |
+| 2400-XIWIO | 90.1            | 80          | Two year       | 22        |
+| 1187-WILMM | 89.4            | 80          | Two year       | 23        |
+| 5429-LWCMV | 89.15           | 80          | Month-to-month | 24        |
+| 8132-YPVBX | 85.95           | 80          | Month-to-month | 25        |
+| 4536-PLEQY | 85.05           | 80          | Month-to-month | 26        |
+| 9121-PHQSR | 85.05           | 80          | Month-to-month | 26        |
+| 9314-IJWSQ | 84.8            | 80          | Month-to-month | 28        |
+| 8714-CTZJW | 82.85           | 80          | Month-to-month | 29        |
+| 9110-HSGTV | 82.45           | 80          | Two year       | 30        |
+| 6617-WLBQC | 81.85           | 80          | One year       | 31        |
+| 6968-GMKPR | 81.55           | 80          | Month-to-month | 32        |
+| 0454-OKRCT | 80.6            | 80          | Two year       | 33        |
+| 8212-CRQXP | 80              | 80          | Month-to-month | 34        |
+| 3955-JBZZM | 78.8            | 80          | Month-to-month | 35        |
+| 4626-OZDTJ | 78.65           | 80          | One year       | 36        |
+| 9552-TGUZV | 75              | 80          | Month-to-month | 37        |
+| 5233-AOZUF | 74.95           | 80          | Month-to-month | 38        |
+| 5148-ORICT | 74.35           | 80          | Two year       | 39        |
+| 9840-EFJQB | 74.35           | 80          | Month-to-month | 39        |
+| 6384-VMJHP | 73              | 80          | Two year       | 41        |
+| 3200-MNQTF | 70.9            | 80          | Two year       | 42        |
+| 0958-YHXGP | 69.9            | 80          | Month-to-month | 43        |
+| 5018-LXQQG | 66.3            | 80          | Month-to-month | 44        |
+| 5568-DMXZS | 65.45           | 80          | Month-to-month | 45        |
+| 6652-YFFJO | 64.9            | 80          | Month-to-month | 46        |
+| 0384-RVBPI | 64.4            | 80          | Month-to-month | 47        |
+| 5387-ASZNZ | 63.85           | 80          | One year       | 48        |
+| 9670-BPNXF | 62.55           | 80          | One year       | 49        |
+| 9220-CXRSC | 61.4            | 80          | Two year       | 50        |
 
 </details>
 
@@ -529,7 +641,10 @@ ORDER BY churn_rate_pct DESC;
 <details>
 <summary>Output</summary>
 
-
+| tech_support | total_customers | churned_customers | churn_rate_pct | risk_rank |
+|----------------|-----------------|-------------------|----------------|-----------|
+| No             | 3473            | 1446              | 41.64          | 1         |
+| Yes            | 2044            | 310               | 15.17          | 2         |
 
 </details>
 
@@ -555,7 +670,18 @@ LIMIT 10;
 <details>
 <summary>Output</summary>
 
-
+| city          | total_customers | average_cltv | total_neighborhood_value | city_churn_rate_pct |
+|---------------|-----------------|--------------|--------------------------|---------------------|
+| Los Angeles   | 305             | 4377.33      | 1335085                  | 29.51               |
+| San Diego     | 150             | 4368.01      | 655202                   | 33.33               |
+| Sacramento    | 108             | 4540.66      | 490391                   | 24.07               |
+| San Jose      | 112             | 4233.38      | 474138                   | 25.89               |
+| San Francisco | 104             | 4335.46      | 450888                   | 29.81               |
+| Fresno        | 64              | 4338.33      | 277653                   | 25.00               |
+| Long Beach    | 60              | 4494.22      | 269653                   | 25.00               |
+| Oakland       | 52              | 4334.40      | 225389                   | 25.00               |
+| Stockton      | 44              | 4371.18      | 192332                   | 27.27               |
+| Bakersfield   | 40              | 4607.55      | 184302                   | 7.50                |
 
 </details>
 
@@ -580,7 +706,18 @@ LIMIT 10;
 <details>
 <summary>Output</summary>
 
-
+| city          | churned_count | total_lost_cltv | avg_lost_customer_cltv |
+|---------------|---------------|-----------------|------------------------|
+| Los Angeles   | 90            | 373341          | 4148.23                |
+| San Diego     | 50            | 209199          | 4183.98                |
+| San Francisco | 31            | 124680          | 4021.94                |
+| San Jose      | 29            | 111626          | 3849.17                |
+| Sacramento    | 26            | 107058          | 4117.62                |
+| Fresno        | 16            | 65320           | 4082.50                |
+| Long Beach    | 15            | 64433           | 4295.53                |
+| Oakland       | 13            | 54984           | 4229.54                |
+| Glendale      | 13            | 53262           | 4097.08                |
+| Modesto       | 12            | 46055           | 3837.92                |
 
 </details>
 
