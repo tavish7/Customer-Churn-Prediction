@@ -2,7 +2,11 @@
 /~$Telco_customer_churn.xlsx
 /erd.png
 Update/
+
 # Ignore Power BI Project files and folders
 PowerBI/*.Report/
 PowerBI/*.SemanticModel/
 PowerBI/*.pbip
+
+# Ignore CatBoost training logs
+catboost_info/
