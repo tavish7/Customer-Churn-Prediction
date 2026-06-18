@@ -2,6 +2,7 @@
 /~$Telco_customer_churn.xlsx
 /erd.png
 Update/
-/Final Report.pbip
-/Final Report.Report/
-/Final Report.SemanticModel/
+# Ignore Power BI Project files and folders
+PowerBI/*.Report/
+PowerBI/*.SemanticModel/
+PowerBI/*.pbip
