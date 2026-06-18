@@ -1,0 +1,19 @@
+model Model
+	culture: en-IN
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["customer_churn_clean","_Key_Measures","_Key_Measure"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table customer_churn_clean
+ref table _Key_Measure
+
+ref cultureInfo en-IN
+

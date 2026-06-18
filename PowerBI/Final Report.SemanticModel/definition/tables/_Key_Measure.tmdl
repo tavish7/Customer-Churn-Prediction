@@ -1,0 +1,71 @@
+table _Key_Measure
+	lineageTag: 5e26e72c-2f19-41ce-86ef-8bd6935f9ca6
+
+	measure 'Total Customers' = COUNTROWS('customer_churn_clean')
+		formatString: #,0
+		lineageTag: 33557e10-9dcc-4ffc-88e2-b924eb09df9e
+
+	measure 'Churned Customers' = CALCULATE([Total Customers], 'customer_churn_clean'[churn_value] = 1)
+		formatString: 0
+		lineageTag: 4264d1e9-ea53-4759-8574-08c69e2750f6
+
+	measure 'Retained Customers' = [Total Customers] - [Churned Customers]
+		formatString: 0
+		lineageTag: 458731a8-9619-47a4-9f90-dff18228d761
+
+	measure 'Churn Rate %' = DIVIDE([Churned Customers], [Total Customers], 0)
+		lineageTag: 7573ee7c-e4a4-450c-ad89-2d1b55ed7a6a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total MRR' = SUM('customer_churn_clean'[monthly_charges])
+		lineageTag: 6a94a049-2433-49f8-9eb3-f54047945433
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Lost MRR' = CALCULATE([Total MRR], 'customer_churn_clean'[churn_value] = 1)
+		lineageTag: 7710cc0d-db74-4e22-b982-77032a9ce733
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Retained MRR' = [Total MRR] - [Lost MRR]
+		lineageTag: 81c157ec-79ec-4a8c-8fc1-5c623ecaa2e0
+
+	measure 'ARPU (Average Revenue Per User)' = DIVIDE([Total MRR], [Total Customers], 0)
+		lineageTag: b760456f-b116-4a0a-ba7f-559b3c59b490
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average CLTV' = AVERAGE('customer_churn_clean'[cltv])
+		lineageTag: 1bad489e-58d4-450b-b785-5617066d8411
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Lost Gold Customers' = CALCULATE([Churned Customers], 'customer_churn_clean'[customer_value_segment] = "Gold")
+		formatString: 0
+		lineageTag: d82fd08c-d1a6-4bf9-9eaf-59f645fe99cf
+
+	measure 'Revenue at High Risk' = ```
+			CALCULATE(
+			    SUM('customer_churn_clean'[monthly_charges]), 
+			    'customer_churn_clean'[churn_value] = 0, 
+			    'customer_churn_clean'[churn_score] >= 80
+			)
+			```
+		lineageTag: d958e2c9-6163-4f55-afa6-0588f9974126
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition _Key_Measure = m
+		mode: import
+		source =
+				let
+				  Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Removed Columns" = Table.RemoveColumns(Source,{"Column1"})
+				in
+				  #"Removed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
