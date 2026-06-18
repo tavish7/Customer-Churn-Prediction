@@ -10,3 +10,11 @@ PowerBI/*.pbip
 
 # Ignore CatBoost training logs
 catboost_info/
+
+# Phase 5 chatbot: secrets and generated database
+phase5_chatbot/.env
+phase5_chatbot/database/churn.db
+
+# Python caches
+__pycache__/
+*.pyc
