@@ -258,8 +258,6 @@ The SQLite database is built automatically from
 [`Data Files/customer_churn_clean.csv`](Data%20Files/customer_churn_clean.csv) on
 first run.
 
-> **Note:** Your API key lives in `phase5_chatbot/.env`, which is gitignored and
-> never committed.
 
 ---
 
