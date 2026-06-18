@@ -2,8 +2,7 @@
 
 This string is static text derived from the Phase 3 star schema
 (`01_database_schema_setup.sql`) and the feature-engineering rules in the
-Phase 1 notebook (`01_EDA_and_Preprocessing.ipynb`). The running chatbot reads
-this module, never the notebook itself.
+Phase 1 notebook (`01_EDA_and_Preprocessing.ipynb`). 
 """
 from __future__ import annotations
 

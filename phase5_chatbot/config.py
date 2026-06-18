@@ -43,23 +43,16 @@ MAX_RETRIES = 3  # self-correction attempts for the SQL generator
 
 
 def get_api_key() -> str | None:
-    """Return the Google Gemini API key from the environment, if set."""
     return os.getenv("GOOGLE_API_KEY")
 
 
 def get_llm(temperature: float = DEFAULT_TEMPERATURE):
-    """Create a configured ``ChatGoogleGenerativeAI`` instance.
-
-    Imports are local so that modules which only need paths (e.g. the database
-    layer) do not pay the cost of importing langchain or fail when it is absent.
-    """
+    """Create a configured ``ChatGoogleGenerativeAI`` instance."""
     from langchain_google_genai import ChatGoogleGenerativeAI
 
     api_key = get_api_key()
     if not api_key:
         raise RuntimeError(
-            "GOOGLE_API_KEY is not set. Copy phase5_chatbot/.env.example to "
-            "phase5_chatbot/.env and add your Gemini API key."
         )
 
     return ChatGoogleGenerativeAI(

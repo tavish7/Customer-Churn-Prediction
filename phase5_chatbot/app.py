@@ -14,10 +14,10 @@ import streamlit as st
 # Make the package importable whether launched as a script or a module.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from phase5_chatbot import config  # noqa: E402
-from phase5_chatbot.database import get_customer_count  # noqa: E402
-from phase5_chatbot.graph import answer_question  # noqa: E402
-from phase5_chatbot.ui.sample_questions import (  # noqa: E402
+from phase5_chatbot import config 
+from phase5_chatbot.database import get_customer_count 
+from phase5_chatbot.graph import answer_question 
+from phase5_chatbot.ui.sample_questions import (  
     FEATURED_QUESTIONS,
     SAMPLE_QUESTIONS,
 )

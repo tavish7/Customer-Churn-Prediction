@@ -1,11 +1,4 @@
--- ============================================================================
--- Phase 5 Chatbot - SQLite star schema (runtime build script)
--- ----------------------------------------------------------------------------
--- This script is executed by init_db.py AFTER the cleaned CSV has been loaded
--- into a table named `staging_churn_data` (via pandas.to_sql).
--- It mirrors the Phase 3 MySQL model in `01_database_schema_setup.sql`,
--- adapted to SQLite (TEXT/REAL/INTEGER types, ALTER...RENAME, no CREATE DATABASE).
--- ============================================================================
+
 
 -- Make the build repeatable.
 DROP TABLE IF EXISTS dim_location;
