@@ -86,7 +86,7 @@ def process_question(question: str) -> None:
             "sql": result.get("generated_query", ""),
             "data": result.get("query_result"),
         })
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         st.session_state.messages.append({
             "role": "assistant",
             "content": f"Something went wrong while answering: {exc}",
