@@ -8,7 +8,6 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-import pandas as pd
 import streamlit as st
 
 # Make the package importable whether launched as a script or a module.
@@ -16,14 +15,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from phase5_chatbot import config 
 from phase5_chatbot.database import get_customer_count 
-from phase5_chatbot.graph import answer_question 
+from phase5_chatbot.graph import stream_question 
+from phase5_chatbot.logging_utils import attach_list_handler 
 from phase5_chatbot.ui.sample_questions import (  
     FEATURED_QUESTIONS,
     SAMPLE_QUESTIONS,
 )
 
 st.set_page_config(
-    page_title="Churn Insights Chatbot",
+    page_title="Telco Bot",
     page_icon="\U0001F4CA",
     layout="wide",
 )
@@ -56,6 +56,10 @@ def _init_state() -> None:
         st.session_state.messages = []  # list of dicts: role, content, sql?, data?
     if "pending_question" not in st.session_state:
         st.session_state.pending_question = None
+    if "logs" not in st.session_state:
+        st.session_state.logs = []  # in-memory activity log lines
+    # Route the named logger's records into this session's log buffer.
+    attach_list_handler(st.session_state.logs)
 
 
 def queue_question(question: str) -> None:
@@ -64,8 +68,22 @@ def queue_question(question: str) -> None:
     st.rerun()
 
 
+# Friendly, user-facing labels for each pipeline step shown in the status box.
+_STEP_LABELS = {
+    "question_classifier": "Understanding your question...",
+    "generic_responder": "Putting together an answer...",
+    "query_generator": "Working out how to look that up...",
+    "query_executor": "Searching the customer database...",
+    "response_formatter": "Summarizing the answer...",
+}
+
+
 def process_question(question: str) -> None:
-    """Run the LangGraph pipeline for a question and store the exchange."""
+    """Run the LangGraph pipeline for a question and store the exchange.
+
+    Streams per-node progress into a live status box so the user can see what
+    the assistant is doing while the LLM works.
+    """
     st.session_state.messages.append({"role": "user", "content": question})
 
     if not config.get_api_key():
@@ -78,19 +96,29 @@ def process_question(question: str) -> None:
         })
         return
 
-    try:
-        result = answer_question(question)
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": result.get("final_response", "Sorry, I couldn't answer that."),
-            "sql": result.get("generated_query", ""),
-            "data": result.get("query_result"),
-        })
-    except Exception as exc:
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": f"Something went wrong while answering: {exc}",
-        })
+    final_state: dict = {}
+    with st.status("Thinking...", expanded=True) as status:
+        try:
+            for node_name, output, final_state in stream_question(question):
+                label = _STEP_LABELS.get(node_name, node_name)
+                st.write(label)
+                if node_name == "query_executor" and output and output.get("error_message"):
+                    st.write("That query didn't work - trying a different approach...")
+            status.update(label="Done", state="complete", expanded=False)
+        except Exception as exc:
+            status.update(label="Something went wrong", state="error")
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"Something went wrong while answering: {exc}",
+            })
+            return
+
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": final_state.get("final_response", "Sorry, I couldn't answer that."),
+        "sql": final_state.get("generated_query", ""),
+        "data": final_state.get("query_result"),
+    })
 
 
 # ----------------------------------------------------------------------------
@@ -98,7 +126,7 @@ def process_question(question: str) -> None:
 # ----------------------------------------------------------------------------
 def render_sidebar() -> None:
     with st.sidebar:
-        st.title("\U0001F4CA Churn Insights")
+        st.title("\U0001F4CA Telco Bot")
         st.caption("Ask questions about Telco customer churn in plain English.")
 
         st.subheader("Status")
@@ -125,9 +153,23 @@ def render_sidebar() -> None:
                         queue_question(question)
 
         st.divider()
+        st.subheader("Activity log")
+        st.caption("See what the assistant is doing behind the scenes.")
+        if st.toggle("Show activity log", key="show_logs"):
+            logs = st.session_state.get("logs", [])
+            if logs:
+                st.code("\n".join(logs[-100:]), language=None)
+            else:
+                st.caption("No activity yet - ask a question to see the log.")
+            if st.button("Clear log", use_container_width=True):
+                st.session_state.logs.clear()
+                st.rerun()
+
+        st.divider()
         if st.button("Clear chat", use_container_width=True):
             st.session_state.messages = []
             st.session_state.pending_question = None
+            st.session_state.logs.clear()
             st.rerun()
 
 
@@ -137,25 +179,18 @@ def render_sidebar() -> None:
 def render_welcome() -> None:
     st.subheader("Welcome \U0001F44B")
     st.write(
-        "I can answer questions about **7,043 Telco customers** and their churn "
-        "behaviour. Our overall churn rate is **26.54%**. "
+        "I'm **Telco Bot**. I can answer questions about **7,043 Telco customers** "
+        "and their churn behaviour. Our overall churn rate is **26.54%**. "
         "Click a sample question below or type your own at the bottom."
     )
 
 
 def render_history() -> None:
+    # Only the natural-language answer is shown; the underlying SQL and raw
+    # query rows are kept in session state for logging but hidden from users.
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
-            if msg["role"] == "assistant":
-                sql = msg.get("sql")
-                if sql:
-                    with st.expander("View generated SQL"):
-                        st.code(sql, language="sql")
-                data = msg.get("data")
-                if data:
-                    with st.expander(f"View raw data ({len(data)} rows)"):
-                        st.dataframe(pd.DataFrame(data), use_container_width=True)
 
 
 def render_featured_chips() -> None:
@@ -173,15 +208,15 @@ def main() -> None:
     _init_state()
     render_sidebar()
 
-    st.title("Customer Churn Insights Chatbot")
+    st.title("Telco Bot - Customer Churn Insights")
 
     # Process any staged question (from a chip or the chat input) first so the
-    # new exchange is included in the history render below.
+    # new exchange is included in the history render below. The live status box
+    # is rendered inside process_question itself.
     pending = st.session_state.pending_question
     if pending:
         st.session_state.pending_question = None
-        with st.spinner("Analyzing your question..."):
-            process_question(pending)
+        process_question(pending)
 
     if not st.session_state.messages:
         render_welcome()

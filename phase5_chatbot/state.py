@@ -9,6 +9,7 @@ class GraphState(TypedDict):
 
     Attributes:
         user_question: The natural-language question from the user.
+        question_type: 'data' (needs SQL) or 'generic' (small talk / meta).
         generated_query: The SQL produced by the query_generator node.
         query_result: Successful query rows as a list of dicts, else None.
         error_message: Execution error text used to drive self-correction.
@@ -17,6 +18,7 @@ class GraphState(TypedDict):
     """
 
     user_question: str
+    question_type: str
     generated_query: str
     query_result: Optional[list[dict]]
     error_message: Optional[str]
